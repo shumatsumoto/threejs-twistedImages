@@ -62,22 +62,50 @@ async function init() {
 
   const geometry = setupGeometry();
   window.geometry = geometry;
+
+  // 表面と裏面用の異なる画像を読み込み
+  const frontTexture = await loadTex(
+    "https://static.not-equal.dev/ja_webgl_basic/img/output1.jpg"
+  );
+  const backTexture = await loadTex(
+    "https://static.not-equal.dev/ja_webgl_basic/img/output2.jpg"
+  );
+
   const material = new THREE.ShaderMaterial({
     uniforms: {
-      uTex: {
-        value: await loadTex(
-          "https://static.not-equal.dev/ja_webgl_basic/img/output1.jpg"
-        ),
-      },
+      uTexFront: { value: frontTexture }, // 表面のテクスチャ
+      uTexBack: { value: backTexture }, // 裏面のテクスチャ
       uTick: { value: 0 },
       uProgress: { value: 0 },
     },
     vertexShader,
     fragmentShader,
-    wireframe: true,
+    side: THREE.DoubleSide, // 両面表示を有効にする
+    wireframe: false,
   });
   const plane = new THREE.Mesh(geometry, material);
   scene.add(plane);
+
+  // 画像を変更する関数
+  async function setFrontImage(url) {
+    try {
+      const newTexture = await loadTex(url);
+      material.uniforms.uTexFront.value = newTexture;
+      console.log(`Front image changed to: ${url}`);
+    } catch (error) {
+      console.error("Failed to load front image:", error);
+    }
+  }
+
+  async function setBackImage(url) {
+    try {
+      const newTexture = await loadTex(url);
+      material.uniforms.uTexBack.value = newTexture;
+      console.log(`Back image changed to: ${url}`);
+    } catch (error) {
+      console.error("Failed to load back image:", error);
+    }
+  }
 
   // クリックイベントの設定
   let isAnimating = false;
@@ -145,4 +173,52 @@ async function init() {
   }
 
   animate();
+
+  // 画像変更関数をグローバルに公開
+  window.setFrontImage = setFrontImage;
+  window.setBackImage = setBackImage;
+
+  // サンプル画像URLs
+  const sampleImages = {
+    output1: "https://static.not-equal.dev/ja_webgl_basic/img/output1.jpg",
+    output2: "https://static.not-equal.dev/ja_webgl_basic/img/output2.jpg",
+    output3: "https://static.not-equal.dev/ja_webgl_basic/img/output3.jpg",
+    output4: "https://static.not-equal.dev/ja_webgl_basic/img/output4.jpg",
+  };
+
+  // サンプル画像変更関数
+  window.setSampleFrontImage = (key) => {
+    if (sampleImages[key]) {
+      setFrontImage(sampleImages[key]);
+    } else {
+      console.error(
+        `Available sample images: ${Object.keys(sampleImages).join(", ")}`
+      );
+    }
+  };
+
+  window.setSampleBackImage = (key) => {
+    if (sampleImages[key]) {
+      setBackImage(sampleImages[key]);
+    } else {
+      console.error(
+        `Available sample images: ${Object.keys(sampleImages).join(", ")}`
+      );
+    }
+  };
+
+  // 使用例をコンソールに表示
+  console.log("=== 画像変更機能 ===");
+  console.log("1. 任意のURLで画像を変更:");
+  console.log('setFrontImage("画像のURL") - 表面の画像を変更');
+  console.log('setBackImage("画像のURL") - 裏面の画像を変更');
+  console.log("");
+  console.log("2. サンプル画像で変更:");
+  console.log('setSampleFrontImage("output3") - 表面をoutput3に変更');
+  console.log('setSampleBackImage("output4") - 裏面をoutput4に変更');
+  console.log(`Available samples: ${Object.keys(sampleImages).join(", ")}`);
+  console.log("");
+  console.log("例:");
+  console.log('setSampleFrontImage("output3")');
+  console.log('setSampleBackImage("output4")');
 }
