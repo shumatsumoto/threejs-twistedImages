@@ -10,5 +10,6 @@ void main() {
 
   vec4 tex = texture(uTex, vUv);
   
-  gl_FragColor = vec4(vDelay, 1., 0., 1.);
+  // gl_FragColor = vec4(vDelay, 0., 0., 1.);
+  gl_FragColor = tex;
 }
