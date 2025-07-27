@@ -23,6 +23,7 @@ async function init() {
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.domElement.style.cursor = "pointer"; // クリック可能であることを示す
   // renderer.setClearColor(0xffffff);
   document.body.appendChild(renderer.domElement);
 
@@ -78,7 +79,37 @@ async function init() {
   const plane = new THREE.Mesh(geometry, material);
   scene.add(plane);
 
-  // lil gui
+  // クリックイベントの設定
+  let isAnimating = false;
+  let animationProgress = 0;
+
+  function onCanvasClick(event) {
+    if (isAnimating) return; // アニメーション中は無視
+
+    isAnimating = true;
+    animationProgress = animationProgress === 0 ? 1 : 0; // 0と1を切り替え
+
+    gsap.to(material.uniforms.uProgress, {
+      value: animationProgress,
+      duration: 1.5,
+      ease: "power2.inOut",
+      onComplete: () => {
+        isAnimating = false;
+      },
+    });
+  }
+
+  // レンダラーのcanvasにクリックイベントを追加
+  renderer.domElement.addEventListener("click", onCanvasClick);
+
+  // ウィンドウリサイズ対応
+  window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // lil gui（デバッグ用として残す）
   const gui = new GUI();
   const folder1 = gui.addFolder("Animation");
   folder1.open();
@@ -89,10 +120,17 @@ async function init() {
     .listen();
   const datData = { next: !!material.uniforms.uProgress.value };
   folder1.add(datData, "next").onChange(() => {
+    if (isAnimating) return; // アニメーション中は無視
+
+    isAnimating = true;
+    animationProgress = +datData.next;
     gsap.to(material.uniforms.uProgress, {
-      value: +datData.next,
+      value: animationProgress,
       duration: 2,
       ease: "power2.inOut",
+      onComplete: () => {
+        isAnimating = false;
+      },
     });
   });
 
