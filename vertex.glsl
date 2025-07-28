@@ -26,12 +26,11 @@ void main() {
 	float progress = easeCubic(delay);
 
 	// z軸の手前方向に少しずらしておく
-	pos.z += 100.;
+	pos.z -= 200.;
 
 	// 回転
-	vec3 axis = vec3(1.0, 0.0, 0.0);
-	pos = rotate(pos, axis, 102.0 * HALF_PI * progress);
+	vec3 axis = vec3(-1.0, 0.0, 0.0);
+	pos = rotate(pos, axis, 4.0 * HALF_PI * progress);
 
-	// pos.z += progress * 300.;
 	gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 }

@@ -38,7 +38,7 @@ async function init() {
   function setupGeometry() {
     const wSeg = 30,
       hSeg = 30;
-    const geometry = new THREE.PlaneGeometry(600, 300, wSeg, hSeg);
+    const geometry = new THREE.PlaneGeometry(1000, 700, wSeg, hSeg);
     // 頂点の数：(widthSegment + 1) * (heightSegment + 1)
     const delayVertices = [];
 
@@ -64,9 +64,7 @@ async function init() {
   window.geometry = geometry;
 
   // 表面と裏面用の異なる画像を読み込み
-  const frontTexture = await loadTex(
-    "https://static.not-equal.dev/ja_webgl_basic/img/output1.jpg"
-  );
+  const frontTexture = await loadTex("/img/output1.jpg");
   const backTexture = await loadTex(
     "https://static.not-equal.dev/ja_webgl_basic/img/output2.jpg"
   );
@@ -74,7 +72,7 @@ async function init() {
   const material = new THREE.ShaderMaterial({
     uniforms: {
       uTexFront: { value: frontTexture }, // 表面のテクスチャ
-      uTexBack: { value: backTexture }, // 裏面のテクスチャ
+      // uTexBack: { value: backTexture }, // 裏面のテクスチャ
       uTick: { value: 0 },
       uProgress: { value: 0 },
     },
@@ -119,7 +117,7 @@ async function init() {
 
     gsap.to(material.uniforms.uProgress, {
       value: animationProgress,
-      duration: 1.5,
+      duration: 2,
       ease: "power2.inOut",
       onComplete: () => {
         isAnimating = false;
@@ -180,7 +178,7 @@ async function init() {
 
   // サンプル画像URLs
   const sampleImages = {
-    output1: "https://static.not-equal.dev/ja_webgl_basic/img/output1.jpg",
+    output1: "/img/output1.jpg",
     output2: "https://static.not-equal.dev/ja_webgl_basic/img/output2.jpg",
     output3: "https://static.not-equal.dev/ja_webgl_basic/img/output3.jpg",
     output4: "https://static.not-equal.dev/ja_webgl_basic/img/output4.jpg",
