@@ -1,17 +1,12 @@
 precision mediump float;
 
 #pragma glslify: easeBack = require(glsl-easings/back-in-out)
-#pragma glslify: rotate = require(glsl-rotate/rotate)
-
-#pragma glslify: easeBack = require(glsl-easings/back-in-out)
 #pragma glslify: easeCubic = require(glsl-easings/cubic-in-out)
-
 #pragma glslify: rotate = require(glsl-rotate/rotate)
 
 varying vec2 vUv;
 varying float vDelay;
 attribute float aDelay;
-
 uniform float uProgress;
 
 const float HALF_PI = 1.570796327;
@@ -20,12 +15,8 @@ void main() {
 	vUv = uv;
 	vDelay = aDelay;
 	vec3 pos = position;
-	// aDelay => 0 ~ 1
-	// aDelay * 0.3=> 0 ~ 0.3
 	float delay = clamp(uProgress * 1.2 - aDelay * 0.2, 0., 1.);
 	float progress = easeCubic(delay);
-
-	// z軸の手前方向に少しずらしておく
 	pos.z -= 200.;
 
 	// 回転
