@@ -19,8 +19,8 @@ void main() {
 	float progress = easeCubic(delay);
 	pos.z -= 200.;
 
-	// 回転
-	vec3 axis = vec3(-1.0, 0.0, 0.0);
+	// 画像ツイスト
+	vec3 axis = vec3(-1.0, -1.0, 0.0);
 	pos = rotate(pos, axis, 4.0 * HALF_PI * progress);
 
 	gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);

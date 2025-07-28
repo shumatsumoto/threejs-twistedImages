@@ -145,17 +145,18 @@ async function init() {
     .name("progess")
     .listen();
   const datData = { next: !!material.uniforms.uProgress.value };
-  folder1.add(datData, "next").onChange(() => {
+  folder1.add(datData, "next").onChange((value) => {
     if (isAnimating) return; // アニメーション中は無視
 
     isAnimating = true;
-    animationProgress = +datData.next;
+    animationProgress = value ? 1 : 0;
     gsap.to(material.uniforms.uProgress, {
       value: animationProgress,
       duration: 2,
       ease: "power2.inOut",
       onComplete: () => {
         isAnimating = false;
+        datData.next = !!animationProgress; // チェック状態を同期
       },
     });
   });
