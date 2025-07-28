@@ -1,6 +1,5 @@
 precision mediump float;
 
-#pragma glslify: easeBack = require(glsl-easings/back-in-out)
 #pragma glslify: easeCubic = require(glsl-easings/cubic-in-out)
 #pragma glslify: rotate = require(glsl-rotate/rotate)
 
